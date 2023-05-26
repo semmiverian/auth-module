@@ -18,7 +18,7 @@ function App() {
   const needToVerifyOtp = false;
   const needToResetPassword = false;
   const finishOnboarding = false;
-  const loggedIn = true;
+  const loggedIn = false;
 
   return (
     <BrowserRouter>
