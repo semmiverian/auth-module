@@ -3,12 +3,12 @@ import AuthContext from '../context/AuthContext';
 import { useContext, useState } from 'react';
 import { Cookies } from 'react-cookie';
 
-type User = {
+export type User = {
   id: number;
   email: string;
-  finishOnboarding: boolean;
-  otpVerified: true;
-  passwordReset: true;
+  needFinishOnboard: boolean;
+  needVerifiedOtp: true;
+  needResetpassword: true;
 };
 
 const cookies = new Cookies();
@@ -32,9 +32,9 @@ export const useAuth = () => {
       const user = {
         id: 1,
         email: 'admin@netflix.com',
-        finishOnboarding: true,
-        otpVerified: true,
-        passwordReset: true,
+        needFinishOnboard: false,
+        needVerifiedOtp: false,
+        needResetpassword: false,
       };
       cookies.set('user', user);
       await sleep();
@@ -81,10 +81,10 @@ export const useAuth = () => {
 };
 
 export const useUser = () => {
-  const user = cookies.get('user') as User;
+  const user = getUser();
   const team = [{ id: 1, teamName: 'Netflix' }];
 
-  return { user, team };
+  return { user, team, getUser };
 };
 
 export const useRouter = () => {
@@ -97,6 +97,10 @@ export const useRouter = () => {
   };
 
   return { location, history, params, customFunction };
+};
+
+export const getUser = () => {
+  return cookies.get('user') as User;
 };
 
 export const useAuthContext: () => AuthContext = () => useContext(AuthContext);

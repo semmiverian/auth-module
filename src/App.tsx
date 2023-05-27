@@ -1,7 +1,8 @@
-import { BrowserRouter, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import { PublicRouter } from './auth/Router/PublicRouter';
 import { OnboardingRouter } from './auth/Router/OnboardingRouter';
 import { AuthenticatedRouter } from './auth/Router/AuthenticatedRouter';
+import { User, useRouter, useUser } from './auth/hooks/useAuth';
 import {
   Dashboard,
   EmptyPage,
@@ -15,13 +16,15 @@ import {
 import { RedirectionRoute } from './auth/Router/RedirectionRoute';
 
 function App() {
-  const needToVerifyOtp = false;
-  const needToResetPassword = false;
-  const finishOnboarding = false;
-  const loggedIn = true;
+  const { user = {} as User } = useUser();
+  const { location } = useRouter();
+  const needToVerifyOtp = user.needVerifiedOtp;
+  const needToResetPassword = user.needResetpassword;
+  const needToOnboard = user.needFinishOnboard;
+  const loggedIn = Boolean(user.id) || (location.state as any)?.authenticated;
 
   return (
-    <BrowserRouter>
+    <>
       <PublicRouter>
         <RedirectionRoute
           path={'/login'}
@@ -39,25 +42,26 @@ function App() {
               condition: needToResetPassword,
               path: '/resetPassword',
             },
+            {
+              condition: needToOnboard,
+              path: '/onboard/v1',
+            },
           ]}
         />
         <Route path={'/signup'} component={Signup} />
       </PublicRouter>
-
-      <OnboardingRouter active={finishOnboarding} redirectTo="/404">
+      <OnboardingRouter active={needToOnboard} redirectTo="/404">
         <Route path={'/onboard/v1'} component={Onboard} />
         <Route path={'/onboard/v2'} component={Onboard} />
       </OnboardingRouter>
-
       <AuthenticatedRouter active={loggedIn} redirectTo="/login">
         <Route path={'/transactions'} component={Transaction} />
         <Route path={'/otp'} component={Otp} />
         <Route path={'/resetPassword'} component={ResetPassword} />
         <Route path={'/'} component={Dashboard} exact />
       </AuthenticatedRouter>
-
       <Route path={'/404'} component={EmptyPage} />
-    </BrowserRouter>
+    </>
   );
 }
 
