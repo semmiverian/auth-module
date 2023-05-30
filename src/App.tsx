@@ -35,16 +35,16 @@ function App() {
               path: '/otp',
             },
             {
-              condition: loggedIn,
-              path: '/',
+              condition: needToOnboard,
+              path: '/onboard/v1',
             },
             {
               condition: needToResetPassword,
               path: '/resetPassword',
             },
             {
-              condition: needToOnboard,
-              path: '/onboard/v1',
+              condition: loggedIn,
+              path: '/',
             },
           ]}
         />
@@ -54,7 +54,10 @@ function App() {
         <Route path={'/onboard/v1'} component={Onboard} />
         <Route path={'/onboard/v2'} component={Onboard} />
       </OnboardingRouter>
-      <AuthenticatedRouter active={loggedIn} redirectTo="/login">
+      <AuthenticatedRouter
+        active={loggedIn && !needToOnboard}
+        redirectTo={needToOnboard ? '/onboard/v1' : '/login'}
+      >
         <Route path={'/transactions'} component={Transaction} />
         <Route path={'/otp'} component={Otp} />
         <Route path={'/resetPassword'} component={ResetPassword} />
