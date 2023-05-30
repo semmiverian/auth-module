@@ -46,6 +46,10 @@ function App() {
               condition: loggedIn,
               path: '/',
             },
+            {
+              condition: needToOnboard,
+              path: '/onboard/v1',
+            },
           ]}
         />
         <Route path={'/signup'} component={Signup} />
